@@ -3,6 +3,11 @@
  * @file   ps.h
  * \brief  The parameter server interface
  */
+
+#ifndef MY_LOG
+#define MY_LOG(msg) std::cout << msg << std::endl;
+#endif
+
 #ifndef PS_PS_H_
 #define PS_PS_H_
 /** \brief basic setups in ps */

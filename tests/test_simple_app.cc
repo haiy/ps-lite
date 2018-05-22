@@ -3,6 +3,7 @@ using namespace ps;
 
 int num = 0;
 
+
 void ReqHandle(const SimpleData& req, SimpleApp* app) {
   CHECK_EQ(req.head, 1);
   CHECK_EQ(req.body, "test");
@@ -11,7 +12,9 @@ void ReqHandle(const SimpleData& req, SimpleApp* app) {
 }
 
 int main(int argc, char *argv[]) {
+  dmlc::InitLogging("main-simple-app\0");
   int n = 100;
+  MY_LOG("begin to start ps app ");
   Start(0);
   SimpleApp app(0, 0);
   app.set_request_handle(ReqHandle);

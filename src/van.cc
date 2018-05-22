@@ -251,6 +251,8 @@ void Van::Start(int customer_id) {
     scheduler_.id = kScheduler;
     is_scheduler_ = Postoffice::Get()->is_scheduler();
 
+    MY_LOG(scheduler_.DebugString());  
+
     // get my node info
     if (is_scheduler_) {
       my_node_ = scheduler_;

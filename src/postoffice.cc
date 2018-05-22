@@ -7,14 +7,17 @@
 #include "ps/internal/postoffice.h"
 #include "ps/internal/message.h"
 #include "ps/base.h"
+#include "ps/ps.h"
 
 namespace ps {
-Postoffice::Postoffice() {
+Postoffice::Postoffice() {  
+  MY_LOG("create Postoffice::Postoffice");
   van_ = Van::Create("zmq");
   env_ref_ = Environment::_GetSharedRef();
 }
 
 void Postoffice::InitEnvironment() {
+  MY_LOG( "Postoffice::init");
   const char* val = NULL;
   val = CHECK_NOTNULL(Environment::Get()->find("DMLC_NUM_WORKER"));
   num_workers_ = atoi(val);
@@ -25,10 +28,11 @@ void Postoffice::InitEnvironment() {
   is_worker_ = role == "worker";
   is_server_ = role == "server";
   is_scheduler_ = role == "scheduler";
-  verbose_ = GetEnv("PS_VERBOSE", 0);
+  verbose_ = GetEnv("PS_VERBOSE", 1000);
 }
 
 void Postoffice::Start(int customer_id, const char* argv0, const bool do_barrier) {
+  MY_LOG("Postoffice::Start");
   start_mu_.lock();
   if (init_stage_ == 0) {
     InitEnvironment();
@@ -42,12 +46,14 @@ void Postoffice::Start(int customer_id, const char* argv0, const bool do_barrier
     // init node info.
     for (int i = 0; i < num_workers_; ++i) {
       int id = WorkerRankToID(i);
+      
       for (int g : {id, kWorkerGroup, kWorkerGroup + kServerGroup,
                     kWorkerGroup + kScheduler,
                     kWorkerGroup + kServerGroup + kScheduler}) {
         node_ids_[g].push_back(id);
       }
     }
+  
 
     for (int i = 0; i < num_servers_; ++i) {
       int id = ServerRankToID(i);
@@ -65,7 +71,7 @@ void Postoffice::Start(int customer_id, const char* argv0, const bool do_barrier
     init_stage_++;
   }
   start_mu_.unlock();
-
+  PS_VLOG(1) << "Postoffice::Start Van";
   // start van
   van_->Start(customer_id);
 

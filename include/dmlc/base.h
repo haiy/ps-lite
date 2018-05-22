@@ -3,6 +3,9 @@
  * \file base.h
  * \brief defines configuration macros
  */
+
+
+#include<iostream>
 #ifndef DMLC_BASE_H_
 #define DMLC_BASE_H_
 
@@ -176,3 +179,9 @@ inline const char* BeginPtr(const std::string &str) {
 #endif
 
 #endif  // DMLC_BASE_H_
+
+
+
+#ifndef MY_LOG
+#define MY_LOG(msg) std::cout << msg << std::endl;
+#endif
